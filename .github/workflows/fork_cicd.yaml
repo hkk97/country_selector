@@ -1,0 +1,39 @@
+name: ForkCICD
+
+on:
+  push:
+    branches: ["master"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set Flutter version
+        uses: subosito/flutter-action@v2.2.0
+        with:
+          flutter-version: "${{ github.event.inputs.flutter_version }}"
+      - name: Install packages
+        run: |
+          flutter config --enable-web
+          cd example
+          flutter pub get
+      - name: Flutter build Web
+        run: |
+          cd example
+          flutter build web --web-renderer html --no-sound-null-safety -dart-define=FLUTTER_WEB_USE_SKIA=true --release
+      - name: Fork to Release Branch
+        uses: s0/git-publish-subdir-action@develop
+        env:
+          REPO: self
+          BRANCH: release # The branch name where you want to push the assets
+          FOLDER: example/build/web # The directory where your assets are generated
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHub will automatically add this - you don't need to bother getting a token
+          MESSAGE: "Build: ({sha}) {msg}" # The commit message
