@@ -1,41 +1,81 @@
 import 'package:country_selector/const/country.dart';
 import 'package:country_selector/const/enum.dart';
 import 'package:country_selector/data/coutnry_list.dart';
+import 'package:country_selector/util/text_util.dart';
 import 'package:country_selector/widgets/country_card_widget.dart';
 import 'package:flutter/material.dart';
 
 class CountrySelectorWidget extends StatefulWidget {
-  final SelectedLocale selectedLocale;
   final PreferredSizeWidget? customAppBar;
-  final Color focusedBorderColor;
-  final BorderRadius borderRadius;
-  final TextStyle textStyle;
   final double bottomAppBarHeight;
   final EdgeInsetsGeometry continueBtnPadding;
-  final Color continueBtnOverlayColor;
+
+  final SelectedLocale selectedLocale;
+  final bool showSelectedWidget;
+  final Duration aniDuration;
+  final ValueChanged<Country> onSelectedCountry;
+
+  final String? appBarText;
+  final String? searchText;
+  final String? selectedCountryText;
+  final String? withoutMatchText;
+  final String? continueBtnText;
+
+  final TextStyle textFieldTextStyle;
+  final TextStyle? appBarTextStyle;
+  final TextStyle? searchTextStyle;
+  final TextStyle? selectedCountryTextStyle;
+  final TextStyle? withoutMatchTextStyle;
+  final TextStyle? continueBtnTextStyle;
+
+  final Color focusedBorderColor;
+  final Color selectedCardColor;
   final Color continueBtnBgColor;
-  final String continueBtnText;
+  final Color continueBtnOverlayColor;
+
+  final BorderRadius borderRadius;
   final BorderRadius continueBtnRadius;
-  final TextStyle continueTextStyle;
+
   const CountrySelectorWidget({
     super.key,
     this.customAppBar,
-    this.textStyle = const TextStyle(color: Colors.black87),
-    this.focusedBorderColor = Colors.black12,
     this.bottomAppBarHeight = 75,
-    this.continueBtnOverlayColor = Colors.white,
-    this.continueBtnBgColor = Colors.amber,
-    this.continueBtnText = "Continue",
+    this.continueBtnPadding = const EdgeInsets.symmetric(vertical: 13.5),
     this.selectedLocale = SelectedLocale.en,
-    this.continueTextStyle =
-        const TextStyle(color: Colors.black, letterSpacing: 1.185),
+    this.showSelectedWidget = true,
+    this.aniDuration = const Duration(seconds: 1),
+    required this.onSelectedCountry,
+    this.appBarText,
+    this.searchText,
+    this.selectedCountryText,
+    this.withoutMatchText,
+    this.continueBtnText,
+    this.textFieldTextStyle = const TextStyle(color: Colors.black87),
+    this.appBarTextStyle = const TextStyle(
+      fontWeight: FontWeight.bold,
+      color: Colors.black,
+    ),
+    this.searchTextStyle,
+    this.selectedCountryTextStyle =
+        const TextStyle(fontWeight: FontWeight.bold),
+    this.withoutMatchTextStyle = const TextStyle(
+      color: Colors.black,
+      fontWeight: FontWeight.bold,
+    ),
+    this.continueBtnTextStyle = const TextStyle(
+      color: Colors.black,
+      letterSpacing: 1.185,
+    ),
+    this.focusedBorderColor = Colors.black12,
+    this.selectedCardColor = Colors.amber,
+    this.continueBtnBgColor = Colors.amber,
+    this.continueBtnOverlayColor = Colors.white,
+    this.borderRadius = const BorderRadius.all(Radius.circular(18.5)),
     this.continueBtnRadius = const BorderRadius.all(
       Radius.circular(
         22.5,
       ),
     ),
-    this.continueBtnPadding = const EdgeInsets.symmetric(vertical: 13.5),
-    this.borderRadius = const BorderRadius.all(Radius.circular(18.5)),
   });
 
   @override
@@ -45,22 +85,21 @@ class CountrySelectorWidget extends StatefulWidget {
 class CountrySelectorWidgetState extends State<CountrySelectorWidget> {
   late ScrollController _scrollController;
   late List<Country> _countries;
-  late List<String> _countriesStr;
   late ValueNotifier<List<Country>?> _countriesNotifi;
   late ValueNotifier<Country?> _selectedCountryNotifi;
+  late TextUtil _textUtil;
 
   @override
   void initState() {
     super.initState();
+    _textUtil = TextUtil(selectedLocale: widget.selectedLocale);
     _scrollController = ScrollController();
     _selectedCountryNotifi = ValueNotifier(null);
     _countries = [];
-    _countriesStr = [];
     _countriesNotifi = ValueNotifier(null);
     for (int i = 0; i < countriesMap.length; i++) {
       final country = Country.fromJson(countriesMap[i]);
       _countries.add(country);
-      _countriesStr.add(country.toString());
     }
     _countriesNotifi.value = _countries;
   }
@@ -82,12 +121,9 @@ class CountrySelectorWidgetState extends State<CountrySelectorWidget> {
               backgroundColor: Colors.white,
               elevation: 0.0,
               centerTitle: true,
-              title: const Text(
-                "Select Your Country",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
+              title: Text(
+                widget.appBarText ?? _textUtil.titleStr() ?? '',
+                style: widget.appBarTextStyle,
               ),
             ),
         body: Container(
@@ -104,27 +140,35 @@ class CountrySelectorWidgetState extends State<CountrySelectorWidget> {
                   child: TextField(
                     cursorColor: Colors.black,
                     keyboardType: TextInputType.text,
-                    style: widget.textStyle,
+                    style: widget.textFieldTextStyle,
                     cursorRadius: const Radius.circular(3.5),
                     maxLines: 1,
-                    onChanged: (value) async => {
-                      if (value.isNotEmpty)
-                        {
-                          // _selectedCountryNotifi.value = true,
-                        }
+                    onChanged: (value) async {
+                      if (value.isNotEmpty) {
+                        final validCountries = _countries
+                            .where((country) =>
+                                country.isContains(value.toUpperCase()))
+                            .toList();
+                        _countriesNotifi.value =
+                            validCountries.isEmpty ? null : validCountries;
+                      } else {
+                        _countriesNotifi.value = _countries;
+                      }
                     },
                     decoration: InputDecoration(
                       isDense: false,
                       filled: true,
-                      hintText: "Search",
+                      hintText:
+                          widget.searchText ?? _textUtil.searchStr() ?? "",
                       prefixIcon: const Icon(
                         Icons.search,
                         color: Colors.grey,
                       ),
-                      hintStyle: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey.withOpacity(0.85),
-                      ),
+                      hintStyle: widget.searchTextStyle ??
+                          TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey.withOpacity(0.85),
+                          ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: widget.borderRadius,
                         borderSide: BorderSide(
@@ -140,17 +184,70 @@ class CountrySelectorWidgetState extends State<CountrySelectorWidget> {
                   ),
                 ),
               ),
+              widget.showSelectedWidget
+                  ? ValueListenableBuilder(
+                      valueListenable: _selectedCountryNotifi,
+                      builder: (context, country, child) {
+                        return country == null
+                            ? const SizedBox()
+                            : Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 15.0,
+                                  right: 25.0,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 5.0,
+                                      ),
+                                      child: Text(
+                                        widget.selectedCountryText ??
+                                            _textUtil.selectedCountryStr() ??
+                                            "",
+                                        style: widget.selectedCountryTextStyle,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 5.0,
+                                      ),
+                                      child: Container(
+                                        height: 1.30,
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        color: Colors.grey.shade300,
+                                      ),
+                                    ),
+                                    CountryCardWidget(
+                                      aniDuration: widget.aniDuration,
+                                      selectedColor: widget.selectedCardColor,
+                                      selectedLocale: widget.selectedLocale,
+                                      country: country,
+                                      isSelected: true,
+                                      onClickSelected: () {
+                                        _selectedCountryNotifi.value = null;
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              );
+                      },
+                    )
+                  : const SizedBox(),
               Expanded(
                 child: ValueListenableBuilder(
                   valueListenable: _countriesNotifi,
                   builder: (context, countries, child) {
                     if (countries == null) {
-                      return const Center(
-                        child: Text(
-                          "does not find",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
+                      return Center(
+                        child: SizedBox(
+                          child: Text(
+                            widget.withoutMatchText ??
+                                _textUtil.withoutMatchStr() ??
+                                '',
+                            style: widget.withoutMatchTextStyle,
                           ),
                         ),
                       );
@@ -185,6 +282,9 @@ class CountrySelectorWidgetState extends State<CountrySelectorWidget> {
                                         SliverChildBuilderDelegate(
                                       (context, index) {
                                         return CountryCardWidget(
+                                          aniDuration: widget.aniDuration,
+                                          selectedColor:
+                                              widget.selectedCardColor,
                                           selectedLocale: widget.selectedLocale,
                                           country: countries[index],
                                           isSelected: country == null
@@ -247,15 +347,19 @@ class CountrySelectorWidgetState extends State<CountrySelectorWidget> {
                                 ),
                               ),
                             ),
-                            onPressed: () {},
+                            onPressed: () => widget.onSelectedCountry(
+                              _selectedCountryNotifi.value!,
+                            ),
                             child: Padding(
                               padding: EdgeInsets.symmetric(
                                 vertical: isSelected != null ? 13.5 : 10.0,
                                 horizontal: isSelected != null ? 30 : 20.0,
                               ),
                               child: Text(
-                                widget.continueBtnText,
-                                style: widget.continueTextStyle,
+                                widget.continueBtnText ??
+                                    _textUtil.continueStr() ??
+                                    '',
+                                style: widget.continueBtnTextStyle,
                               ),
                             ),
                           ),

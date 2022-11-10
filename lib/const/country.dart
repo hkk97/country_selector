@@ -15,8 +15,9 @@ class Country {
     required this.flagUri,
   });
 
-  @override
-  String toString() => "$zhCH $zhHK $en $dialCode $code";
+  bool isContains(String pattern) =>
+      "${zhCH.toUpperCase()} ${en.toUpperCase()} ${en.toUpperCase()} $dialCode ${code.toUpperCase()}"
+          .contains(pattern);
 
   Map<String, dynamic> toJson() => {
         "zhCH": zhCH,
@@ -24,7 +25,6 @@ class Country {
         "en": en,
         "dialCode": dialCode,
         "code": code,
-        "flagUri": flagUri,
       };
 
   factory Country.fromJson(Map<String, dynamic> json) => Country(

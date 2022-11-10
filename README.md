@@ -1,40 +1,53 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# Country Selector
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages).
+A Country Selector UI Library written by Dart and Fluter, it support three locales with countries name, achieve lazy loading and country card animatiion on listview. This UI Library support 
+CountrySelectorWidget and showCountrySelectorBottomSheet to fullfill the needed of usage.
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-library-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages).
--->
+<p align="center">
+     <a href="https://github.com/flutter/flutter/tree/3.3.8" alt="Flutter">
+        <img src="https://img.shields.io/badge/Flutter-v3.3.8 (stable)-4BC51D.svg?style=flat" /></a>
+     <a alt="Dart">
+        <img src="https://img.shields.io/badge/Dart-v2.18.4 (stable)-4BC51D.svg?style=flat" /></a>
+     <a alt="DevTools">
+        <img src="https://img.shields.io/badge/DevTools-v2.15.0 (stable)-4BC51D.svg?style=flat" /></a>
+     <a alt="VS Code">
+        <img src="https://img.shields.io/badge/VS Code-v1.68.1-4BC51D.svg?style=flat" /></a>
+</p>
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
-
-## Features
-
-TODO: List what your package can do. Maybe include images, gifs, or videos.
-
-## Getting started
-
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+|             | Android | iOS  | Linux | macOS  | Web | Windows     |
+|-------------|---------|------|-------|--------|-----|-------------|
+| **Support** | Any | Any | Any   | Any | Any | Any         |
 
 ## Usage
+To use this plugin, add `country_selector` as a [dependency in your pubspec.yaml file].
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
+### Examples
+Here are the examples that show you how to use the CountrySelectorWidget and showCountrySelectorBottomSheet.
 
+#### Usage of CountrySelectorWidget
+- the default locale is SelectedLocale.en, you would change to SelectedLocale.zhCH or SelectedLocale.zhHK
+- once the country is selected and clicked the continue btn it will trigger the valueChangedCallback called onSelectedCountry and return the Country
 ```dart
-const like = 'sample';
+CountrySelectorWidget(
+    onSelectedCountry: (Country country) async {
+        // selected country callback 
+    },
+),
 ```
 
-## Additional information
+####  Usage of showCountrySelectorBottomSheet
+- the different between CountrySelectorWidget and showCountrySelectorBottomSheet are showCountrySelectorBottomSheet is wrap with the showModalBottomSheet
+- showCountrySelectorBottomSheet will also do the Navigator.pop(context) for you once the continue button are clicked
+```dart
+showCountrySelectorBottomSheet(
+    context: context,
+    onSelectedCountry: (Country country) async {
+        // selected country callback 
+    };
+```
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
-# country_selector
+## Dmonstraction of CountrySelectorWidget
+!["CountrySelectorWidget - SelectedLocale.zhCH"](example/demo_gifs/countrySelectorWidget_demo.gif)
+
+## Dmonstraction of showCountrySelectorBottomSheet
+!["showCountrySelectorBottomSheet - SelectedLocale.en"](example/demo_gifs/showCountrySelectorBottomSheet.gif)

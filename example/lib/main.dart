@@ -5,6 +5,7 @@ void main() {
   runApp(
     MaterialApp(
       title: 'Country Selector Demo',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
