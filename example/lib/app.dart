@@ -51,13 +51,13 @@ class App extends StatelessWidget {
         actions: [
           GestureDetector(
             onTap: () => showCountrySelectorBottomSheet(
-              context: context,
-              onSelectedCountry: (Country country) async =>
+                context: context,
+                onSelectedCountry: (country) async {
                   await showSuccessDialog(
-                context,
-                country,
-              ),
-            ),
+                    context,
+                    country,
+                  );
+                }),
             child: Center(
               child: Container(
                 margin: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -86,7 +86,7 @@ class App extends StatelessWidget {
         ),
         child: CountrySelectorWidget(
           selectedLocale: SelectedLocale.zhCH,
-          onSelectedCountry: (Country country) async => await showSuccessDialog(
+          onSelectedCountry: (country) async => await showSuccessDialog(
             context,
             country,
           ),

@@ -1,7 +1,7 @@
-name: country_selector
+name: country_selector_widget_widget
 description: This Country Selector UI Library written by Dart and Fluter and supports three locales with country's name, achieves lazy loading, and country card animation on listview. This UI Library provides CountrySelectorWidget and showCountrySelectorBottomSheet to fulfill the needed usage.
 version: 0.0.1
-homepage: https://hkk97.github.io/country_selector/
+homepage: https://hkk97.github.io/country_selector_widget/
 
 environment:
   sdk: '>=2.18.4 <3.0.0'

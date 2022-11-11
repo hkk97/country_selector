@@ -1,4 +1,4 @@
-import 'package:country_selector/country_selector.dart';
+import 'package:country_selector_widget/const/enum.dart';
 
 class TextUtil {
   final SelectedLocale selectedLocale;

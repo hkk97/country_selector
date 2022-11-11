@@ -1,8 +1,8 @@
-import 'package:country_selector/const/country.dart';
-import 'package:country_selector/const/enum.dart';
-import 'package:country_selector/data/coutnry_list.dart';
-import 'package:country_selector/util/text_util.dart';
-import 'package:country_selector/widgets/country_card_widget.dart';
+import 'package:country_selector_widget/const/country.dart';
+import 'package:country_selector_widget/const/enum.dart';
+import 'package:country_selector_widget/data/coutnry_list.dart';
+import 'package:country_selector_widget/util/text_util.dart';
+import 'package:country_selector_widget/widgets/country_card_widget.dart';
 import 'package:flutter/material.dart';
 
 class CountrySelectorWidget extends StatefulWidget {

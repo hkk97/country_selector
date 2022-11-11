@@ -36,7 +36,7 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.16.0"
-  country_selector:
+  country_selector_widget:
     dependency: "direct dev"
     description:
       path: ".."

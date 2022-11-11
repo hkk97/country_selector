@@ -1,5 +1,5 @@
-import 'package:country_selector/const/country.dart';
-import 'package:country_selector/const/enum.dart';
+import 'package:country_selector_widget/const/country.dart';
+import 'package:country_selector_widget/const/enum.dart';
 import 'package:flutter/material.dart';
 
 class CountryCardWidget extends StatefulWidget {
@@ -104,7 +104,7 @@ class CountryCardWidgetState extends State<CountryCardWidget>
                             image: DecorationImage(
                               image: Image.asset(
                                 "${widget.country.flagUri}",
-                                package: "country_selector",
+                                package: "country_selector_widget",
                                 fit: BoxFit.fill,
                               ).image,
                             ),
