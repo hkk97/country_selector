@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:country_selector/country_selector.dart';
+import 'package:country_selector_widget/country_selector.dart';
 
 class App extends StatelessWidget {
   const App({super.key, required this.title});
